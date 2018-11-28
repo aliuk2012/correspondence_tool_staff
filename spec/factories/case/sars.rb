@@ -124,11 +124,13 @@ FactoryBot.define do
     end
 
     after(:create) do |kase, evaluator|
-      create :case_transition_pending_dacu_clearance,
+      create :case_transition_progress_for_clearance,
              case: kase,
              acting_team: evaluator.responding_team,
-             acting_user: evaluator.responder
+             acting_user: evaluator.responder,
+             target_team: evaluator.approving_team
       kase.reload
+
     end
   end
 
@@ -156,10 +158,12 @@ FactoryBot.define do
 
     after(:create) do |kase, evaluator|
       if evaluator.flag_for_disclosure
-        create :case_transition_pending_dacu_clearance,
+        create :case_transition_progress_for_clearance,
                case: kase,
                acting_team: evaluator.responding_team,
-               acting_user: evaluator.responder
+               acting_user: evaluator.responder,
+               target_team: evaluator.approving_team
+
         create :case_transition_approve,
                case: kase,
                acting_team: evaluator.approving_team,

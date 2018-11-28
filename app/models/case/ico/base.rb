@@ -13,7 +13,8 @@ class Case::ICO::Base < Case::Base
                  external_deadline: :date,
                  date_ico_decision_received: :date,
                  ico_decision: :string,
-                 ico_decision_comment: :string
+                 ico_decision_comment: :string,
+                 date_draft_compliant: :date
 
   acts_as_gov_uk_date :date_ico_decision_received,
                       :date_responded,
