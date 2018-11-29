@@ -329,6 +329,7 @@ FactoryBot.define do
     end
 
     date_responded { Date.today }
+    date_draft_compliant { received_date + 2.days }
 
     after(:create) do |kase, evaluator|
       create :case_transition_respond,
@@ -380,6 +381,7 @@ FactoryBot.define do
     trait :late do
       received_date { 30.business_days.ago }
       date_responded { 1.business_day.ago }
+      date_draft_compliant { 1.business_day.ago }
     end
 
     trait :granted_in_full do
