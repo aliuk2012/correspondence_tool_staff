@@ -1,5 +1,7 @@
 class Case::OverturnedICO::SAR < Case::OverturnedICO::Base
 
+  include DraftTimeliness::ProgressedForClearance
+
   delegate :message, to: :original_case
 
   has_paper_trail only: [
