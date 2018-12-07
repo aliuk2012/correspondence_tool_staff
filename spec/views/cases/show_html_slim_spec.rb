@@ -8,6 +8,7 @@ describe 'cases/show.html.slim', type: :view do
 
   def setup_policies(policies)
     policy_names = [
+      :approve?,
       :assignments_execute_reassign_user?,
       :can_remove_attachment?,
       :can_respond?,
@@ -17,12 +18,11 @@ describe 'cases/show.html.slim', type: :view do
       :can_add_message_to_case?,
       :destroy_case?,
       :destroy_case_link?,
-      :execute_response_approval?,
       :extend_for_pit?,
+      :new_case_link?,
       :remove_clearance?,
       :remove_pit_extension?,
       :request_further_clearance?,
-      :new_case_link?,
       :upload_responses?,
       :upload_responses_for_approve?,
       :upload_responses_for_flagged?,
@@ -279,7 +279,7 @@ describe 'cases/show.html.slim', type: :view do
     before(:each) do
       setup_policies assignments_execute_reassign_user?: false,
                      remove_clearance?: false,
-                     execute_response_approval?: false,
+                     approve?: false,
                      upload_responses?: false,
                      upload_responses_for_approve?: false,
                      upload_responses_for_redraft?: false
