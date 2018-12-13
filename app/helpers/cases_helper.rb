@@ -40,6 +40,7 @@ module CasesHelper
               assign_to_new_team_case_assignment_path(@case, @case .responder_assignment),
               id: 'action--assign-new-team',
               class: 'button'
+    # TODO: Rename this to 'upload_responses' to keep it in line with the state machine action
     when :add_responses
       link_to t('common.case.upload_response'),
               upload_responses_case_path(@case),
