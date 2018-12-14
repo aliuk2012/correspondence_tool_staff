@@ -19,12 +19,12 @@ module PageObjects
         admin_cases_new_ico:            'Admin::Cases::NewICOPage',
         admin_cases_new_overturned_sar: 'Admin::Cases::NewOverturnedSARPage',
         admin_cases_new_overturned_foi: 'Admin::Cases::NewOverturnedFOIPage',
-        cases_approve:                  'Cases::ApprovePage',
         assign_to_new_team:             'Assignments::AssignToNewTeamPage',
         assignments_edit:               'Assignments::EditPage',
         assignments_new:                'Assignments::NewPage',
         assignment_rejected:            'Assignments::ShowRejectedPage',
         cases:                          'CasesPage',
+        cases_approve:                  'Cases::ApprovePage',
         cases_close:                    'Cases::ClosePage',
         cases_new:                      'Cases::NewPage',
         cases_new_foi:                  'Cases::New::FOIPage',
@@ -36,6 +36,10 @@ module PageObjects
         cases_edit_ico:                 'Cases::Edit::ICOPage',
         cases_edit_closure:             'Cases::EditClosurePage',
         cases_upload_responses:         'Cases::UploadResponsesPage',
+        cases_upload_response_and_approve:
+          'Cases::UploadResponseAndApprovePage',
+        cases_upload_response_and_return_for_redraft:
+          'Cases::UploadResponseAndReturnForRedraftPage',
         cases_remove_clearance_form:    'Cases::RemoveClearanceFormPage',
         cases_respond:                  'Cases::RespondPage',
         cases_search:                   'Cases::SearchPage',
@@ -66,12 +70,10 @@ module PageObjects
         users_destroy:                  'Users::DestroyPage',
       }.each do |page_name, page_class|
         full_page_class = "PageObjects::Pages::#{page_class}"
+
         define_method "#{page_name}_page" do
           app_pages[page_name] ||= full_page_class.constantize.__send__ :new
-
-
         end
-
       end
 
       {
