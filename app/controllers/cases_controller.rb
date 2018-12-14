@@ -20,11 +20,12 @@ class CasesController < ApplicationController
                   :new_case_link,
                   :destroy_case_link,
                   :remove_pit_extension,
-                  :response_upload_and_approve,
                   :response_upload_for_redraft,
                   :update_closure,
                   :upload_responses,
                   :upload_responses_action,
+                  :upload_response_and_approve,
+                  :upload_response_and_approve_action,
                 ]
   before_action :set_url, only: [:search, :open_cases]
 
@@ -323,14 +324,13 @@ class CasesController < ApplicationController
     )
     rus.upload!
     @s3_direct_post = S3Uploader.s3_direct_post_for_case(@case, 'responses')
+
     case rus.result
     when :blank
       flash.now[:alert] = t('alerts.response_upload_blank?')
-      flash.keep(:mode)
       render :upload_responses
     when :error
       flash.now[:alert] = t('alerts.response_upload_error')
-      flash.keep(:mode)
       render :upload_responses
     when :ok
       flash[:notice] = t('notices.response_uploaded')
@@ -339,13 +339,42 @@ class CasesController < ApplicationController
     end
   end
 
-  def response_upload_and_approve
+  def upload_response_and_approve
     authorize @case
-
     @s3_direct_post = S3Uploader.s3_direct_post_for_case(@case, 'responses')
     @approval_action = 'approve'
     @case = @case.decorate
-    render 'response_upload_and_approve'
+  end
+
+  def upload_response_and_approve_action
+    authorize @case, :upload_response_and_approve?
+
+    rus = ResponseUploaderService.new(
+      kase: @case,
+      current_user: current_user,
+      action: 'upload-approve',
+      uploaded_files: params[:uploaded_files],
+      upload_comment: params[:upload_comment],
+      bypass_message: params[:bypass_approval][:bypass_message],
+      bypass_further_approval:
+        !params[:bypass_approval][:press_office_approval_required] == 'true'
+    )
+    rus.upload!
+    @s3_direct_post = S3Uploader.s3_direct_post_for_case(@case, 'responses')
+
+    @case = @case.decorate
+    case rus.result
+    when :blank
+      flash.now[:alert] = t('alerts.response_upload_blank?')
+      render :upload_response_and_approve
+    when :error
+      flash.now[:alert] = t('alerts.response_upload_error')
+      render :upload_response_and_approve
+    when :ok
+      flash[:notice] = t('notices.response_uploaded')
+      set_permitted_events
+      redirect_to case_path @case
+    end
   end
 
   def response_upload_for_redraft
@@ -968,13 +997,13 @@ class CasesController < ApplicationController
     end
   end
 
-  def authorize_upload_response_for_action(kase, action)
-    case action
-    when nil, 'upload', 'upload-flagged'  then authorize kase, 'upload_responses?'
-    when 'upload-approve'                 then authorize kase, 'upload_responses_for_approve?'
-    when 'upload-redraft'                 then authorize kase, 'upload_responses_for_redraft?'
-    end
-  end
+  # def authorize_upload_response_for_action(kase, action)
+  #   case action
+  #   when nil, 'upload', 'upload-flagged'  then authorize kase, 'upload_responses?'
+  #   when 'upload-approve'                 then authorize kase, 'upload_responses_for_approve?'
+  #   when 'upload-redraft'                 then authorize kase, 'upload_responses_for_redraft?'
+  #   end
+  # end
 
   def s3_uploader_for(kase, upload_type)
     S3Uploader.s3_direct_post_for_case(kase, upload_type)
