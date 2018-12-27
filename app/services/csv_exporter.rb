@@ -12,13 +12,14 @@ class CSVExporter
       'Responder',
       'Date received',
       'Internal deadline',
-      'External_deadline',
+      'External deadline',
       'Date responded',
+      'Date draft compliant ',
       'Workflow',
       'Name',
       'Requester type',
       'Message',
-      'Info_held',
+      'Info held',
       'Outcome',
       'Refusal reason',
       'Exemptions',
@@ -36,7 +37,7 @@ class CSVExporter
   end
 
   #rubocop:disable Metrics/CyclomaticComplexity
-  def to_csv
+  def to_csv   #rubocop:disable Metrics/MethodLength
     begin
       [
           @kase.number,
@@ -48,6 +49,7 @@ class CSVExporter
           @kase.internal_deadline&.strftime('%F'),
           @kase.external_deadline&.strftime('%F'),
           @kase.date_responded.present? ? @kase.date_responded.strftime('%F') : nil,
+          @kase.date_draft_compliant.present? ? @kase.date_draft_compliant.strftime('%F') : nil,
           @kase.workflow,
           @kase.name,
           @kase.requester_type,
@@ -68,7 +70,7 @@ class CSVExporter
       raise CSVExporterError.new("Error encountered formatting case id #{@kase.id} as CSV:\nOriginal error: #{err.class} #{err.message}")
     end
   end
-  #rubocop:ensable Metrics/CyclomaticComplexity
+  #rubocop:enable Metrics/CyclomaticComplexity
 
   private
   def dequote_and_truncate(text)

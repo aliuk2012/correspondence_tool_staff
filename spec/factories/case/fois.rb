@@ -371,6 +371,8 @@ FactoryBot.define do
     message          { 'info held, granted' }
     received_date    { 22.business_days.ago }
     date_responded   { 4.business_days.ago }
+    date_draft_compliant   { 4.business_days.ago }
+
 
     after(:create) do |kase, evaluator|
       create :case_transition_close,
